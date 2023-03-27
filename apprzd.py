@@ -11,6 +11,9 @@ import re
 nltk.download('stopwords')
 import pickle
 from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
 
 st.set_page_config(page_title='Данные о закупках РЖД',page_icon=":bar_chart",layout="wide")
 
@@ -67,8 +70,6 @@ mas_pub = []#даты публикации
 mas_finish = []#даты окончания
 documents = []
 
-from nltk.stem import WordNetLemmatizer
-
 stemmer = WordNetLemmatizer()
 
 def normalize(massiv):
@@ -103,12 +104,10 @@ normalize(data['Продукт'].tolist())
 data["clean_text"] = documents
 data = data[["clean_text","Категория_предмета_закупки"]]
 
-from sklearn.feature_extraction.text import CountVectorizer
 vectorizer = CountVectorizer(stop_words=stopwords.words('russian'))
 X = vectorizer.fit_transform(data['clean_text'].tolist()).toarray()
 y = data['Категория_предмета_закупки'].tolist()
 
-from sklearn.linear_model import LogisticRegression
 clf = LogisticRegression(random_state = 0)
 clf.fit(X,y)
 
